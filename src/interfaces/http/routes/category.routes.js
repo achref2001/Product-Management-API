@@ -24,6 +24,6 @@ router.get('/:id', getCategoryById);
 router.put('/:id',protect, checkRole('admin', 'manager'), updateCategory);
 
 // Delete category (Admin)
-router.delete('/:id',protect, checkRole('admin', 'manager'), deleteCategory);
+router.delete('/:id',protect, checkRole('admin'), deleteCategory);
 
 module.exports = router;
