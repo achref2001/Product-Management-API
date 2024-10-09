@@ -5,6 +5,7 @@ const dotenv = require('dotenv');
 const authRoutes = require('./interfaces/http/routes/auth.routes.js')
 const productRoutes = require('./interfaces/http/routes/product.routes.js');
 const categoryRoutes = require('./interfaces/http/routes/category.routes');
+const { metricsMiddleware, metricsMiddlewareWithDuration } = require('./metrics');
 const userRoutes = require('./interfaces/http/routes/user.routes.js');
 const cors = require('cors');
 //connectDB();
@@ -19,6 +20,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/users', userRoutes);
+app.get('/api/metrics', metricsMiddleware);
 /**********************************************Routes************************************************* */
 
 /**********************************************APP DECLARATION************************************************* */

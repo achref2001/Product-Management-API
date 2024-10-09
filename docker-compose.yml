@@ -13,3 +13,27 @@ services:
     image: mongo:latest
     ports:
       - '27017:27017'
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - '8888:8888' # Map container's 9090 to 9091 on host
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - '3000:3000'
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
+
+networks:
+  default:
+    driver: bridge
