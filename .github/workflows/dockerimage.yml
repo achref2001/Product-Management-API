@@ -50,6 +50,6 @@ jobs:
             docker rm product_management_api || true
             
             # Run the new container
-            docker run -d --name product_management_api -p 4444:4444 --network achrefapp achrefbechane34/product_management_api:latest
+            docker run -d --name product_management_api -p 4444:4444 --network achrefapp -e MONGODB_URI=mongodb://localhost:27017/product-management-api achrefbechane34/product_management_api:latest
           EOF
        
