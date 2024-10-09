@@ -24,3 +24,27 @@ jobs:
       - name: push the docker image
         id: push-docker-image
         run: docker push ${{secrets.DOCKERHUB_USERNAME}}/product_management_api:latest
+      - name: Deploy to Remote Server
+        env:
+          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+        run: |
+          # Step 1: Store the SSH key in a file and set the right permissions
+          echo "$PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+          # Step 2: SSH into the remote server and deploy the container
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ec2-user@16.171.11.110 << 'EOF'
+            # Login to Docker on the server
+            docker login -u $DOCKERHUB_USERNAME -p ${{ secrets.DOCKERHUB_PASSWORD }}
+            
+            # Pull the latest Docker image from Docker Hub
+            docker pull achrefbechane34/product_management_api:latest
+            
+            # Stop and remove any existing container with the same name
+            docker stop product_management_api || true
+            docker rm product_management_api || true
+            
+            # Run the new container
+            docker run -d --name product_management_api -p 4444:4444 achrefbechane34/product_management_api:latest
+          EOF
