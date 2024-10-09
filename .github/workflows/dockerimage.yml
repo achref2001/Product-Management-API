@@ -50,5 +50,6 @@ jobs:
             docker rm product_management_api || true
             
             # Run the new container
-            docker run -d --name product_management_api -p 4444:4444 achrefbechane34/product_management_api:latest
+            docker run -d --name product_management_api -p 4444:4444 --network achrefapp achrefbechane34/product_management_api:latest
           EOF
+       
