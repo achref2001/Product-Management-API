@@ -5,9 +5,10 @@ services:
     ports:
       - '4444:4444'
     environment:
-      - NODE_ENV=development
-      - MONGODB_URI=mongodb://mongodb:27017/product-management-api
-      - JWT_SECRET=d55dbae6545e07c45274fd7322a534e2a6a00cb4fba0a5571e0bb71569d8d0b8
+      - NODE_ENV: development
+      - MONGODB_URI: mongodb://mongodb:27017/product-management-api
+      - JWT_SECRET: d55dbae6545e07c45274fd7322a534e2a6a00cb4fba0a5571e0bb71569d8d0b8
+
     depends_on:
       - mongodb
   mongodb:
@@ -17,26 +18,6 @@ services:
     environment:
       - NODE_ENV=development
       - MONGODB_URI=mongodb://mongodb:27017/product-management-api
-
-  # prometheus:
-  #   image: prom/prometheus
-  #   container_name: prometheus
-  #   ports:
-  #     - '8888:8888' # Map container's 9090 to 9091 on host
-  #   volumes:
-  #     - ./prometheus.yml:/etc/prometheus/prometheus.yml
-  #   command:
-  #     - '--config.file=/etc/prometheus/prometheus.yml'
-
-  # grafana:
-  #   image: grafana/grafana
-  #   container_name: grafana
-  #   ports:
-  #     - '3000:3000'
-  #   environment:
-  #     - GF_SECURITY_ADMIN_PASSWORD=admin
-  #   depends_on:
-  #     - prometheus
 
 networks:
   default:
