@@ -29,6 +29,10 @@ jobs:
           PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         run: |
+          # Create the .ssh directory and set the right permissions
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
           # Step 1: Store the SSH key in a file and set the right permissions
           echo "$PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
