@@ -7,11 +7,10 @@ services:
     environment:
       NODE_ENV: development
       MONGODB_URI: mongodb://mongodb:27017/product-management-api
-      JWT_SECRET: d55dbae6545e07c45274fd7322a534e2a6a00cb4fba0a5571e0bb71569d8d0b8
-      PORT: 4444
-
+      JWT_SECRET: d55dbae6545e07c45274fd7322a534e2a6a00cb4fba0a5571e0bb71569d8d0b8  
     depends_on:
       - mongodb
+
   mongodb:
     image: mongo:latest
     ports:
@@ -19,6 +18,11 @@ services:
     environment:
       - NODE_ENV=development
       - MONGODB_URI=mongodb://mongodb:27017/product-management-api
+    volumes:
+      - mongodb_data:/data/db  # Persist MongoDB data
+
+volumes:
+  mongodb_data:  # Define the volume for MongoDB
 
 networks:
   default:
