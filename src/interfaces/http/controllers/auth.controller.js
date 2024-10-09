@@ -49,6 +49,44 @@ const register = async (req, res) => {
 };
 
 // User Login
+// const login = async (req, res) => {
+//   const { email, password } = req.body;
+
+//   try {
+//     const user = await User.findOne({ email });
+
+//     if (!user) {
+//       return res.status(401).json({ message: "Invalid credentials" });
+//     }
+
+//     const isMatch = await user.matchPassword(password);
+
+//     if (!isMatch) {
+//       return res.status(401).json({ message: "Invalid credentials" });
+//     }
+
+//     // Generate tokens
+//     const accessToken = generateToken(user);
+//     const refreshToken = generateRefreshToken(user);
+
+//     // Store the refresh token in the user's document
+//     user.refreshToken = refreshToken;
+//     await user.save();
+
+//     return res.status(200).json({
+//       _id: user._id,
+//       name: user.name,
+//       email: user.email,
+//       role: user.role,
+//       accessToken,
+//       refreshToken, // Return refresh token
+//     });
+//   } catch (error) {
+//     console.error("Login error:", error); // Log error for debugging
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
+// User Login
 const login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -83,7 +121,7 @@ const login = async (req, res) => {
     });
   } catch (error) {
     console.error("Login error:", error); // Log error for debugging
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error", error: error.message }); // Include the error message in the response
   }
 };
 
@@ -236,5 +274,5 @@ module.exports = {
   createUser,
   updateUserRole,
   deleteUser,
-  updateUser
+  updateUser,
 };

@@ -8,6 +8,7 @@ const {
   deleteProduct,
   getProducts,
   getProductById,
+  restoreProduct
 } = require('../controllers/product.controller');
 
 const router = express.Router();
@@ -22,6 +23,10 @@ router.post('/', protect, checkRole('admin', 'manager'), createProduct);
 
 // Admin and Manager can update products
 router.put('/:id', protect, checkRole('admin', 'manager'), updateProduct);
+// Admin can update products
+
+router.put('/:id/restore', protect, checkRole('admin'), restoreProduct);
+// Admin and Manager can update product
 
 // Only Admin can delete products
 router.delete('/:id', protect, checkRole('admin'), deleteProduct);

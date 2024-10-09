@@ -1,29 +1,8 @@
-const express = require('express');
-const connectDB = require('./infrastructure/database/mongoose');
-const dotenv = require('dotenv');
-const authRoutes = require('./interfaces/http/routes/auth.routes.js')
-const productRoutes = require('./interfaces/http/routes/product.routes.js');
-const categoryRoutes = require('./interfaces/http/routes/category.routes');
-const userRoutes = require('./interfaces/http/routes/user.routes.js');
-
-dotenv.config();
-
-
-connectDB();
-
-const app = express();
-
-
-app.use(express.json());
-
-app.get('/', (req, res) => {res.send('Product Management API');});
-app.use('/api/auth', authRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/categories', categoryRoutes);
-app.use('/api/users', userRoutes);
-
-// Start the server
+const app = require('./app');
+require('dotenv').config();
 const PORT = process.env.PORT || 4444;
+
+
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

@@ -30,6 +30,10 @@ const ProductSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  isDeleted: {  // Soft deletion flag
+    type: Boolean,
+    default: false,
+  },
 });
 
 const Product = mongoose.model('Product', ProductSchema);

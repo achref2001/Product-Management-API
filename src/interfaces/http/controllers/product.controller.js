@@ -19,128 +19,139 @@ const productSchema = Joi.object({
     .messages({ "any.required": "Category ID is required" }),
 });
 
-// const getProducts = async (req, res) => {
-//   try {
-//     const { categoryId, minPrice, maxPrice } = req.query;
-
-//     // Build query object
-//     let query = {};
-
-//     // Filter by category
-//     if (categoryId) {
-//       const categoryExists = await Category.findById(categoryId);
-//       if (!categoryExists) {
-//         return res.status(404).json({ message: "Category not found" });
-//       }
-//       query.category = categoryId;
-//     }
-
-//     // Filter by price range
-//     if (minPrice || maxPrice) {
-//       query.price = {};
-//       if (minPrice) query.price.$gte = minPrice; // Greater than or equal to minPrice
-//       if (maxPrice) query.price.$lte = maxPrice; // Less than or equal to maxPrice
-//     }
-
-//     // Execute query
-//     const products = await Product.find(query).populate(
-//       "category",
-//       "name description"
-//     );
-
-//     res.status(200).json(products);
-//   } catch (error) {
-//     res.status(500).json({ message: "Server error", error: error.message });
-//   }
-// };
-// Get all products with filtering and pagination
-const getProducts = async (req, res) => {
-  try {
-    const { categoryId, minPrice, maxPrice, page = 1, limit = 10 } = req.query;
-
-    let query = {};
-
-    // Filter by category
-    if (categoryId) {
-      const categoryExists = await Category.findById(categoryId);
-      if (!categoryExists) {
-        return res.status(404).json({ message: "Category not found" });
-      }
-      query.category = categoryId;
-    }
-
-    // Filter by price range
-    if (minPrice || maxPrice) {
-      query.price = {};
-      if (minPrice) query.price.$gte = minPrice;
-      if (maxPrice) query.price.$lte = maxPrice;
-    }
-
-    // Pagination logic
-    const skip = (page - 1) * limit;
-
-    // Execute query with pagination
-    const products = await Product.find(query)
-      .populate("category", "name description")
-      .skip(skip)
-      .limit(parseInt(limit));
-
-    const total = await Product.countDocuments(query); // Total products for pagination
-
-    res.status(200).json({
-      total,
-      currentPage: parseInt(page),
-      totalPages: Math.ceil(total / limit),
-      products,
-    });
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
-  }
-};
-
-// Get a single product by ID (accessible to everyone)
 const getProductById = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
+    // Find the product by ID and ensure it's not deleted
+    const product = await Product.findOne({
+      _id: req.params.id,
+      isDeleted: false,
+    });
+
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
+
     res.status(200).json(product);
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
-  }
-};
-
-// Create a product (admin and manager only)
-const createProduct = async (req, res) => {
-  const { error } = productSchema.validate(req.body);
-  if (error) {
-    return res.status(400).json({ message: error.details[0].message });
-  }
-
-  const { name, description, price, stock, categoryId } = req.body;
-
-  try {
-    // Check if the category exists
-    const category = await Category.findById(categoryId);
-    if (!category) {
-      return res.status(404).json({ message: "Category not found" });
-    }
-
-    // Create the product and assign it to the category
-    const product = await Product.create({
-      name,
-      description,
-      price,
-      stock,
-      category: category._id,
-    });
-
-    res.status(201).json(product);
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+// Get all products (accessible to everyone)
+// Get all products with filtering and pagination
+const getProducts = async (req, res) => {
+    try {
+      const { categoryId, minPrice, maxPrice, page = 1, limit = 10 } = req.query;
+      let query = { isDeleted: false }; // Include soft delete filter
+  
+      // Filter by category
+      if (categoryId) {
+        const categoryExists = await Category.findById(categoryId);
+        if (!categoryExists) {
+          return res.status(404).json({ message: "Category not found" });
+        }
+        query.category = categoryId;
+      }
+  
+      // Filter by price range
+      if (minPrice || maxPrice) {
+        query.price = {};
+        if (minPrice) query.price.$gte = minPrice;
+        if (maxPrice) query.price.$lte = maxPrice;
+      }
+  
+      // Pagination logic
+      const skip = (page - 1) * limit;
+  
+      // Execute query with pagination
+      const products = await Product.find(query)
+        .populate("category", "name description")
+        .skip(skip)
+        .limit(parseInt(limit));
+  
+      const total = await Product.countDocuments(query); // Total products for pagination
+  
+      res.status(200).json({
+        total,
+        currentPage: parseInt(page),
+        totalPages: Math.ceil(total / limit),
+        products,
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Server error", error: error.message });
+    }
+  };
+  
+  // Create a product (admin and manager only)
+  const createProduct = async (req, res) => {
+    const { error } = productSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
+    }
+  
+    const { name, description, price, stock, categoryId } = req.body;
+  
+    try {
+      // Check if the category exists
+      const category = await Category.findById(categoryId);
+      if (!category) {
+        return res.status(404).json({ message: "Category not found" });
+      }
+  
+      // Create the product and assign it to the category
+      const product = await Product.create({
+        name,
+        description,
+        price,
+        stock,
+        category: category._id,
+        isDeleted: false, // Set isDeleted to false
+      });
+  
+      res.status(201).json(product);
+    } catch (error) {
+      res.status(500).json({ message: "Server error", error: error.message });
+    }
+  };
+  
+  // Soft delete a product
+  const deleteProduct = async (req, res) => {
+    try {
+      const productId = req.params.id;
+  
+      const product = await Product.findById(productId);
+      if (!product) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+  
+      product.isDeleted = true; // Mark as deleted
+      await product.save();
+  
+      res.status(200).json({ message: "Product soft deleted" });
+    } catch (error) {
+      console.error("Error while soft deleting product:", error);
+      res.status(500).json({ message: "Server error" });
+    }
+  };
+  
+  // Restore a soft deleted product
+  const restoreProduct = async (req, res) => {
+    try {
+      const productId = req.params.id;
+  
+      const product = await Product.findById(productId);
+      if (!product || !product.isDeleted) {
+        return res.status(404).json({ message: "Product not found or not deleted" });
+      }
+  
+      product.isDeleted = false; // Restore the product
+      await product.save();
+  
+      res.status(200).json({ message: "Product restored" });
+    } catch (error) {
+      console.error("Error while restoring product:", error);
+      res.status(500).json({ message: "Server error" });
+    }
+  };
 
 // Update a product (admin and manager only)
 const updateProduct = async (req, res) => {
@@ -165,28 +176,48 @@ const updateProduct = async (req, res) => {
 };
 
 // Delete a product (admin only)
-const deleteProduct = async (req, res) => {
-  try {
-    const productId = req.params.id;
-    const deletedProduct = await Product.findByIdAndDelete(productId);
+// const deleteProduct = async (req, res) => {
+//   try {
+//     const product = await Product.findById(req.params.id);
 
-    if (!deletedProduct) {
-      return res.status(404).json({ message: "Product not found" });
-    } else {
-      console.log("Product removed successfully:", deletedProduct);
-    }
+//     if (!product) {
+//       return res.status(404).json({ message: "Product not found" });
+//     }
 
-    res.status(200).json({ message: "Product removed" });
-  } catch (error) {
-    console.error("Error while deleting product:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-};
+//     // Mark as deleted instead of removing
+//     product.isDeleted = true;
+//     await product.save();
 
+//     res.status(200).json({ message: "Product soft deleted" });
+//   } catch (error) {
+//     res.status(500).json({ message: "Server error", error: error.message });
+//   }
+// };
+// // Restore a soft-deleted product
+// const restoreProduct = async (req, res) => {
+//   try {
+//     const product = await Product.findById(req.params.id);
+
+//     if (!product || !product.isDeleted) {
+//       return res
+//         .status(404)
+//         .json({ message: "Product not found or not deleted" });
+//     }
+
+//     // Restore the product by setting isDeleted to false
+//     product.isDeleted = false;
+//     await product.save();
+
+//     res.status(200).json({ message: "Product restored", product });
+//   } catch (error) {
+//     res.status(500).json({ message: "Server error", error: error.message });
+//   }
+// };
 module.exports = {
   getProducts,
   getProductById,
   createProduct,
   updateProduct,
   deleteProduct,
+  restoreProduct,
 };

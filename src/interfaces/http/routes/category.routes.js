@@ -6,6 +6,7 @@ const {
   getCategories,
   getCategoryById,
   updateCategory,
+  restoreCategory,
   deleteCategory,
 } = require('../controllers/category.controller');
 
@@ -22,6 +23,9 @@ router.get('/:id', getCategoryById);
 
 // Update category (Admin/Manager)
 router.put('/:id',protect, checkRole('admin', 'manager'), updateCategory);
+// Update category (Admin/Manager)
+
+router.put('/:id/restore', protect, checkRole('admin', 'manager'), restoreCategory);
 
 // Delete category (Admin)
 router.delete('/:id',protect, checkRole('admin'), deleteCategory);

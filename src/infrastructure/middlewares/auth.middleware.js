@@ -13,15 +13,15 @@ const protect = async (req, res, next) => {
     try {
       // Extract token from header
       token = req.headers.authorization.split(' ')[1];
-      console.log('Token:', token);  // Debugging
+    //   console.log('Token:', token);  // Debugging
 
       // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      console.log('Decoded Token:', decoded);  // Debugging
+    //   console.log('Decoded Token:', decoded);  // Debugging
 
       // Find user by decoded token ID
       req.user = await User.findById(decoded.id).select('-password');
-      console.log('User:', req.user);  // Debugging
+    //   console.log('User:', req.user);  // Debugging
 
       // If user is not found
       if (!req.user) {
@@ -31,7 +31,7 @@ const protect = async (req, res, next) => {
       // Continue to the next middleware
       next();
     } catch (error) {
-      console.error('Token error:', error);  // Debugging
+    //   console.error('Token error:', error);  // Debugging
       return res.status(401).json({ message: 'Not authorized, token failed' });
     }
   }
