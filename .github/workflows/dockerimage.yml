@@ -43,9 +43,9 @@ jobs:
             docker login -u $DOCKERHUB_USERNAME -p ${{ secrets.DOCKERHUB_PASSWORD }}
             # clone github repo
             
-            git clone https://github.com/achref2001/Product-Management-API.git /home/ec2-user/achref  
+            cd /home/ec2-user/achref || git clone https://github.com/achref2001/Product-Management-API.git /home/ec2-user/achref  
             cd /home/ec2-user/achref 
-            git pull origin master
+            git pull origin main
             docker-compose pull
             docker-compose  up -d
 

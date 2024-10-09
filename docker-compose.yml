@@ -7,7 +7,8 @@ services:
     environment:
       NODE_ENV: development
       MONGODB_URI: mongodb://mongodb:27017/product-management-api
-      JWT_SECRET: d55dbae6545e07c45274fd7322a534e2a6a00cb4fba0a5571e0bb71569d8d0b8  
+      JWT_SECRET: d55dbae6545e07c45274fd7322a534e2a6a00cb4fba0a5571e0bb71569d8d0b8
+      msg: helloWorld  
     depends_on:
       - mongodb
 
