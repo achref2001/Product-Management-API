@@ -18,4 +18,5 @@ This is a simple REST API built with Express.js. The API provides functionality 
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/my-express-api.git
+   git clone https://github.com/achref2001/Product-Management-API.git
+2. cd my-express-api
