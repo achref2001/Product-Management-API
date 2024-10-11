@@ -28,7 +28,7 @@ const getCategories = async (req, res) => {
   }
 };
 
-// Get category by ID (ensure it's not deleted)
+// Get category by ID 
 const getCategoryById = async (req, res) => {
   try {
     const category = await Category.findOne({

@@ -19,7 +19,7 @@ beforeAll(async () => {
   const user = new User({
     name: "Admin User",
     email: "admin@example.com",
-    password: "password123", // Ensure this password is hashed in your actual model
+    password: "password123", 
     role: "admin",
   });
   await user.save();
@@ -29,7 +29,7 @@ beforeAll(async () => {
     password: "password123",
   });
 
-  token = loginRes.body.accessToken; // Capture the token
+  token = loginRes.body.accessToken; 
 });
 
 afterAll(async () => {

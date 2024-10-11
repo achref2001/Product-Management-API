@@ -8,7 +8,7 @@ const {
   updateUserRole,
   deleteUser,
   updateUser
-} = require('../controllers/auth.controller');
+} = require('../controllers/user.controller');
 
 const router = express.Router();
 

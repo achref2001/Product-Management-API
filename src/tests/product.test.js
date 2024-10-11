@@ -5,7 +5,7 @@ const request = require('supertest');
 const app = require('../app.js'); 
 const Product = require("../../src/domain/models/product.model"); 
 const Category = require("../../src/domain/models/category.model"); 
-const User = require("../../src/domain/models/user.model"); // Ensure you import your User model
+const User = require("../../src/domain/models/user.model"); 
 
 let mongoServer;
 let token;
@@ -20,7 +20,7 @@ beforeAll(async () => {
   const user = new User({
     name: 'Admin User',
     email: 'admin@example.com',
-    password: 'password123', // Ensure this password is hashed in your actual model
+    password: 'password123',
     role: 'admin'
   });
   await user.save();
